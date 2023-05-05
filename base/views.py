@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from base.models import Question
 
 
 def home(request):
@@ -6,8 +7,9 @@ def home(request):
 
 
 def question(request, id):
-    context = {'id_question': id}
-    return render(request, 'base/game.html', context=context)
+    question = Question.objects.filter(enable=True).order_by('id')[id - 1]
+    context = {'question': question}
+    return render(request, 'base/game.html', context)
 
 
 def ranking(request):
