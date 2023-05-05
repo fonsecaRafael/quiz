@@ -4,19 +4,22 @@
         <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <meta http-equiv="X-UA-Compatible" content="ie-edge"/>
-        <title>Quiz - DevPro</title>
-        <link rel="stylesheet" href="./assets/styles/app.css"/>
+        <title>Quiz</title>
+        <link rel="stylesheet" href="/static/base/assets/styles/app.css"/>
     </head>
     <body>
         <div class="login-page">
 
             <p class="subtitle-quiz">Quiz</p>
-            <p class="subtitle-page">Dev Pro</p>
             <div class="form">
-                <form class="login-form" action="game.html">
-                  <input type="text" placeholder="NOME"/>
-                  <input type="password" placeholder="EMAIL"/>
-                  <button>Entrar</button>
+                <p>Erros:
+                    {{ form.errors }}
+                </p>
+                <form class="login-form" method="post" action="/">
+                    {% csrf_token %}
+                  <input type="text" name="name" placeholder="NOME" value="{{form.name.value}}"/>
+                  <input type="email" name="email" placeholder="EMAIL" value="{{form.email.value}}"/>
+                  <button type="submit">Entrar</button>
                 </form>
             </div>
         </div>
