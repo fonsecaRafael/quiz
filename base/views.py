@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
-from base.models import Question, Player
+from django.utils.timezone import now
+from base.models import Question, Player, Reply
 from base.forms import PlayerForm
 
 
@@ -23,6 +24,9 @@ def home(request):
     return render(request, 'base/home.html')
 
 
+MAX_SCORE = 1000
+
+
 def question(request, id):
     try:
         player = request.session['player_id']
@@ -39,6 +43,18 @@ def question(request, id):
             if request.method == 'POST':
                 answer_index = int(request.POST['answer_index'])
                 if answer_index == question.answer:
+                    try:
+                        first_answer_date = Reply.objects.filter(
+                            question=question).order_by('answered_at')[0].answered_at
+                    except IndexError:
+                        Reply(player_id=player, question=question,
+                              score=MAX_SCORE).save()
+                    else:
+                        diff = now() - first_answer_date
+                        diff_in_seconds = int(diff.total_seconds())
+                        score = max(MAX_SCORE - diff_in_seconds, 10)
+                        Reply(player_id=player, question=question,
+                              score=score).save()
                     return redirect(f'/question/{id + 1}')
                 context['answer_index'] = answer_index
             return render(request, 'base/game.html', context=context)

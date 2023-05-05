@@ -6,6 +6,9 @@ class Player(models.Model):
     email = models.EmailField(unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.email
+
 
 class Question(models.Model):
     statement = models.TextField()
@@ -20,3 +23,16 @@ class Question(models.Model):
 
     def __str__(self):
         return self.statement
+
+
+class Reply(models.Model):
+    player = models.ForeignKey(Player, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    score = models.IntegerField()
+    answered_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['player', 'question'], name='unique_answer')
+        ]
