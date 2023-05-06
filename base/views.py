@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.utils.timezone import now
+from django.db.models.aggregates import Sum
 from base.models import Question, Player, Reply
 from base.forms import PlayerForm
 
@@ -22,6 +23,31 @@ def home(request):
             request.session['player_id'] = player.id
             return redirect('/question/1')
     return render(request, 'base/home.html')
+
+
+def ranking(request):
+    try:
+        player_id = request.session['player_id']
+    except KeyError:
+        return redirect('/')
+    else:
+        score_dct = Reply.objects.filter(
+            player_id=player_id).aggregate(Sum('score'))
+        player_score = score_dct['score__sum']
+
+        qtd_greater_scores = Reply.objects.values('player').annotate(
+            Sum('score')).filter(score__sum__gt=player_score).count()
+
+        top_five = list(
+            Reply.objects.values('player', 'player__name').annotate(
+                Sum('score')).order_by('-score__sum')[:5])
+
+        context = {
+            'player_score': player_score,
+            'player_position': qtd_greater_scores + 1,
+            'top_five': top_five
+        }
+        return render(request, 'base/end.html', context)
 
 
 MAX_SCORE = 1000
@@ -58,7 +84,3 @@ def question(request, id):
                     return redirect(f'/question/{id + 1}')
                 context['answer_index'] = answer_index
             return render(request, 'base/game.html', context=context)
-
-
-def ranking(request):
-    return render(request, 'base/end.html')

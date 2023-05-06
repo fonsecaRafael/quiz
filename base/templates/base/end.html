@@ -20,34 +20,20 @@
                 <div id="game" class="justify-center flex-column animate-bottom hidden">
                     
                     <div class="game-result">
-                        <h2>Você está no</h2>
-                        <h2 class="status-player">2º</h2>
+                        <h2>Você fez {{player_score}} pontos e está no </h2>
+                        <h2 class="status-player">{{player_position}}º</h2>
                         <h2>lugar!</h2>
                     </div>
 
                     <br />
                     
                     <h3>Ranking</h3>
+                    {% for player in top_five %}
                     <div class="choice-container">
-                        <p class="choice-prefix">1º</p>
-                        <p class="choice-text">Paula Fernanda Chaves</p>
+                        <p class="choice-prefix">{{forloop.counter}}º</p>
+                        <p class="choice-text">{{player.player__name}} - {{player.score__sum}} pontos</p>
                     </div>
-                    <div class="choice-container">
-                        <p class="choice-prefix">2º</p>
-                        <p class="choice-text">João Pedro Souza</p>
-                    </div>
-                    <div class="choice-container">
-                        <p class="choice-prefix">3º</p>
-                        <p class="choice-text">Felipe Gomes da Silva</p>
-                    </div>
-                    <div class="choice-container">
-                        <p class="choice-prefix">4º</p>
-                        <p class="choice-text">Isa Cristina Lopes</p>
-                    </div>  
-                    <div class="choice-container">
-                        <p class="choice-prefix">5º</p>
-                        <p class="choice-text">Pedro Henrique Lima</p>
-                    </div> 
+                    {% endfor%}
 
                 </div>
             
