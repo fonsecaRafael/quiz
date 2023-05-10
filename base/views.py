@@ -21,7 +21,16 @@ def home(request):
                 return render(request, 'base/home.html', context)
         else:
             request.session['player_id'] = player.id
-            return redirect('/question/1')
+            try:
+                actual_question = Reply.objects.filter(
+                    player=player.id).order_by('-question')[0].question_id
+                last_question = Question.objects.all().order_by('-id')[0].id
+                if actual_question < last_question:
+                    return redirect(f'/question/{actual_question + 1}')
+                else:
+                    return redirect('/ranking')
+            except Reply.DoesNotExist:
+                return redirect('/question/1')
     return render(request, 'base/home.html')
 
 
